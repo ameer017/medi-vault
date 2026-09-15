@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: medivault
+      POSTGRES_PASSWORD: medivault
+      POSTGRES_DB: medivault
+    ports:
+      - "5433:5432"
+    volumes:
+      - medivault_pg:/var/lib/postgresql/data
+
+volumes:
+  medivault_pg:

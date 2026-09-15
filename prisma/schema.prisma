@@ -1,0 +1,184 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PATIENT
+  CLINICIAN
+  ADMIN
+}
+
+enum Sex {
+  FEMALE
+  MALE
+  OTHER
+}
+
+enum BloodGroup {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+enum Genotype {
+  AA
+  AS
+  SS
+  AC
+  SC
+}
+
+enum RecordType {
+  CONSULTATION
+  VITALS
+  PRESCRIPTION
+  LAB
+  ALLERGY
+  IMMUNIZATION
+  NOTE
+}
+
+enum GrantStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum AuditAction {
+  LOGIN
+  VIEW_CHART
+  CREATE_RECORD
+  UPDATE_PROFILE
+  GRANT_ACCESS
+  REVOKE_ACCESS
+  REDEEM_CODE
+  VIEW_EMERGENCY
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         Role     @default(PATIENT)
+  createdAt    DateTime @default(now())
+
+  patientProfile    PatientProfile?
+  clinicianProfile  ClinicianProfile?
+  authoredRecords   ClinicalRecord[] @relation("RecordAuthor")
+  grantsAsClinician AccessGrant[]    @relation("GrantClinician")
+  auditLogs         AuditLog[]
+}
+
+model Facility {
+  id         String              @id @default(cuid())
+  name       String
+  city       String
+  code       String              @unique
+  createdAt  DateTime            @default(now())
+  clinicians ClinicianProfile[]
+  records    ClinicalRecord[]
+}
+
+model PatientProfile {
+  id             String       @id @default(cuid())
+  userId         String       @unique
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth    DateTime?
+  sex            Sex?
+  bloodGroup     BloodGroup?
+  genotype       Genotype?
+  nhiaNumber     String?
+  emergencyName  String?
+  emergencyPhone String?
+  emergencyToken String       @unique
+  createdAt      DateTime     @default(now())
+  allergies      Allergy[]
+  medications    Medication[]
+  records        ClinicalRecord[]
+  grants         AccessGrant[]
+}
+
+model ClinicianProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  licenseNumber String
+  specialty     String
+  facilityId    String
+  facility      Facility @relation(fields: [facilityId], references: [id])
+}
+
+model Allergy {
+  id        String         @id @default(cuid())
+  patientId String
+  patient   PatientProfile @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  substance String
+  reaction  String?
+  severity  String
+  notedAt   DateTime       @default(now())
+  active    Boolean        @default(true)
+}
+
+model Medication {
+  id        String         @id @default(cuid())
+  patientId String
+  patient   PatientProfile @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  name      String
+  dose      String
+  frequency String
+  startedAt DateTime       @default(now())
+  endedAt   DateTime?
+  active    Boolean        @default(true)
+}
+
+model ClinicalRecord {
+  id         String         @id @default(cuid())
+  patientId  String
+  patient    PatientProfile @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  authorId   String?
+  author     User?          @relation("RecordAuthor", fields: [authorId], references: [id])
+  facilityId String?
+  facility   Facility?      @relation(fields: [facilityId], references: [id])
+  type       RecordType
+  title      String
+  summary    String
+  details    Json?
+  recordedAt DateTime       @default(now())
+  createdAt  DateTime       @default(now())
+}
+
+model AccessGrant {
+  id          String         @id @default(cuid())
+  patientId   String
+  patient     PatientProfile @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  clinicianId String?
+  clinician   User?          @relation("GrantClinician", fields: [clinicianId], references: [id])
+  code        String?        @unique
+  status      GrantStatus    @default(ACTIVE)
+  expiresAt   DateTime
+  createdAt   DateTime       @default(now())
+  redeemedAt  DateTime?
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  actorId   String?
+  actor     User?       @relation(fields: [actorId], references: [id])
+  patientId String?
+  action    AuditAction
+  detail    String?
+  createdAt DateTime    @default(now())
+}
