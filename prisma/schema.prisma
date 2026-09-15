@@ -55,6 +55,16 @@ enum GrantStatus {
   EXPIRED
 }
 
+enum DocumentKind {
+  XRAY
+  SCAN
+  LAB_REPORT
+  DOCTOR_NOTE
+  PRESCRIPTION
+  DISCHARGE
+  OTHER
+}
+
 enum AuditAction {
   LOGIN
   VIEW_CHART
@@ -64,6 +74,8 @@ enum AuditAction {
   REVOKE_ACCESS
   REDEEM_CODE
   VIEW_EMERGENCY
+  UPLOAD_FILE
+  DELETE_FILE
 }
 
 model User {
@@ -78,7 +90,8 @@ model User {
   patientProfile    PatientProfile?
   clinicianProfile  ClinicianProfile?
   authoredRecords   ClinicalRecord[] @relation("RecordAuthor")
-  grantsAsClinician AccessGrant[]    @relation("GrantClinician")
+  grantsAsClinician AccessGrant[]     @relation("GrantClinician")
+  uploadedDocuments PatientDocument[] @relation("DocumentUploader")
   auditLogs         AuditLog[]
 }
 
@@ -109,6 +122,7 @@ model PatientProfile {
   medications    Medication[]
   records        ClinicalRecord[]
   grants         AccessGrant[]
+  documents      PatientDocument[]
 }
 
 model ClinicianProfile {
@@ -157,6 +171,22 @@ model ClinicalRecord {
   summary    String
   details    Json?
   recordedAt DateTime       @default(now())
+  createdAt  DateTime       @default(now())
+}
+
+model PatientDocument {
+  id         String         @id @default(cuid())
+  patientId  String
+  patient    PatientProfile @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  uploaderId String?
+  uploader   User?          @relation("DocumentUploader", fields: [uploaderId], references: [id])
+  kind       DocumentKind
+  title      String
+  notes      String?
+  fileName   String
+  mimeType   String
+  sizeBytes  Int
+  data       Bytes
   createdAt  DateTime       @default(now())
 }
 

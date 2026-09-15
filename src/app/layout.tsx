@@ -21,7 +21,11 @@ export const metadata: Metadata = {
     template: "%s · MediVault",
   },
   description:
-    "Patient-owned healthcare records for Nigeria. Share a time-limited chart with your clinician. Emergency card included.",
+    "Patient-owned healthcare records for Nigeria. Share a time-limited chart with your clinician. Keep X-rays and doctor notes in the vault.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

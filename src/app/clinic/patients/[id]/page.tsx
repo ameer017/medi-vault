@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { AllergyList, MedicationList, RecordTimeline } from "@/components/chart-view";
+import { FileGrid, UploadFileForm } from "@/components/file-cabinet";
 import { RecordForm } from "@/components/record-form";
 import { clinicianHasAccess, getPatientChart } from "@/lib/access";
 import { writeAudit } from "@/lib/audit";
 import { ageYears } from "@/lib/datetime";
+import { listPatientFiles } from "@/lib/files";
 import { bloodGroupLabel, genotypeLabel, sexLabel } from "@/lib/labels";
 import { requireClinician } from "@/lib/session";
 
@@ -25,6 +27,7 @@ export default async function ClinicianPatientPage({
 
   const patient = await getPatientChart(id);
   if (!patient) notFound();
+  const files = await listPatientFiles(patient.id);
 
   await writeAudit({
     actorId: session.user.id,
@@ -63,6 +66,17 @@ export default async function ClinicianPatientPage({
         <div className="mt-3">
           <RecordForm patientId={patient.id} />
         </div>
+      </section>
+      <section className="rounded-[2rem] bg-[var(--ink)] p-6 text-white lg:col-span-5">
+        <h2 className="font-display text-2xl">Add a file</h2>
+        <p className="mb-4 mt-1 text-sm text-white/60">X-ray, scan, lab PDF or a doctor note.</p>
+        <div className="[&_label]:text-cyan-200">
+          <UploadFileForm patientId={patient.id} />
+        </div>
+      </section>
+      <section className="rounded-[2rem] bg-white/70 p-6 lg:col-span-7">
+        <h2 className="mb-4 font-display text-2xl">{files.length} in cabinet</h2>
+        <FileGrid files={files} viewerId={session.user.id} />
       </section>
       <section className="rounded-[2rem] bg-white/70 p-6 lg:col-span-12">
         <h2 className="mb-4 font-display text-3xl">Timeline</h2>

@@ -13,6 +13,7 @@ async function main() {
   await prisma.auditLog.deleteMany();
   await prisma.accessGrant.deleteMany();
   await prisma.clinicalRecord.deleteMany();
+  await prisma.patientDocument.deleteMany();
   await prisma.medication.deleteMany();
   await prisma.allergy.deleteMany();
   await prisma.clinicianProfile.deleteMany();
@@ -204,11 +205,62 @@ async function main() {
     },
   });
 
+  const xraySvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 440">
+  <rect width="360" height="440" fill="#07091a"/>
+  <text x="180" y="28" text-anchor="middle" fill="#22d3ee" font-size="11" font-family="sans-serif">CHEST X-RAY PA · LUTH</text>
+  <ellipse cx="180" cy="230" rx="118" ry="150" fill="none" stroke="#67e8f9" stroke-width="3"/>
+  <ellipse cx="128" cy="215" rx="42" ry="78" fill="#164e63" opacity="0.85"/>
+  <ellipse cx="232" cy="215" rx="42" ry="78" fill="#164e63" opacity="0.85"/>
+  <path d="M180 88 L180 340" stroke="#22d3ee" stroke-width="4"/>
+  <path d="M96 168 Q180 210 264 168" fill="none" stroke="#a5f3fc" stroke-width="2"/>
+  <circle cx="180" cy="250" r="18" fill="none" stroke="#22d3ee" stroke-width="2"/>
+  <text x="180" y="412" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Amina Bello · no infiltrate</text>
+</svg>`);
+  const doctorNote = Buffer.from(
+    [
+      "LUTH Cardiology — follow-up note",
+      "Patient: Amina Bello",
+      "",
+      "Chest X-ray PA reviewed. No focal consolidation. Cardiac silhouette within normal limits.",
+      "Continue amlodipine 5 mg once daily. Recheck blood pressure in clinic.",
+      "",
+      "— Dr. Tunde Adeyemi",
+    ].join("\n"),
+  );
+
+  await prisma.patientDocument.createMany({
+    data: [
+      {
+        patientId: patient.id,
+        uploaderId: tunde.id,
+        kind: "XRAY",
+        title: "Chest X-ray PA",
+        notes: "Taken at LUTH. No infiltrate.",
+        fileName: "amina-chest-xray.svg",
+        mimeType: "image/svg+xml",
+        sizeBytes: xraySvg.length,
+        data: xraySvg,
+      },
+      {
+        patientId: patient.id,
+        uploaderId: tunde.id,
+        kind: "DOCTOR_NOTE",
+        title: "Cardiology follow-up note",
+        notes: "Film read and BP plan",
+        fileName: "tunde-followup.txt",
+        mimeType: "text/plain",
+        sizeBytes: doctorNote.length,
+        data: doctorNote,
+      },
+    ],
+  });
+
   await prisma.auditLog.createMany({
     data: [
       { actorId: admin.id, action: "LOGIN", detail: "Seed operator account" },
       { actorId: tunde.id, patientId: patient.id, action: "VIEW_CHART", detail: "Follow-up vitals visit" },
       { actorId: amina.id, patientId: patient.id, action: "GRANT_ACCESS", detail: "Opened chart to Dr. Tunde Adeyemi" },
+      { actorId: tunde.id, patientId: patient.id, action: "UPLOAD_FILE", detail: "XRAY: Chest X-ray PA" },
     ],
   });
 }

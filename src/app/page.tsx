@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Fingerprint, KeyRound, QrCode, Shield } from "lucide-react";
+import { ArrowUpRight, FileStack, Fingerprint, KeyRound, QrCode, Shield } from "lucide-react";
 import { auth } from "@/auth";
 import { firstName, homeForRole } from "@/lib/auth-redirect";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ export default async function HomePage() {
               Not the hospital’s.
             </h1>
             <p className="mt-5 max-w-md text-base leading-relaxed text-[var(--muted)] md:text-lg">
-              Allergies, genotype, labs and notes live in one vault. You issue a
+              Allergies, genotype, labs, X-rays and notes live in one vault. You issue a
               time-boxed code to a clinician — then you can kill it. Carry an ICE
               card for blood group and who to call.
             </p>
@@ -78,11 +78,18 @@ export default async function HomePage() {
           body="Blood group, allergies, who to call. Not the full notes."
         />
         <Bento
-          className="md:col-span-4 bg-gradient-to-br from-indigo-50 to-cyan-50"
+          className="md:col-span-2"
+          icon={FileStack}
+          kicker="Cabinet"
+          title="Films and notes"
+          body="Keep X-rays, scans, lab PDFs and doctor letters with the chart."
+        />
+        <Bento
+          className="md:col-span-2 bg-gradient-to-br from-indigo-50 to-cyan-50"
           icon={Fingerprint}
           kicker="Seeded demo"
-          title="Amina at LUTH, already live"
-          body="Patient amina@medivault.ng / patient123. Clinician tunde@medivault.ng / clinician123 has a 7-day grant."
+          title="Amina at LUTH"
+          body="amina@medivault.ng / patient123. Tunde already has a 7-day grant."
         />
       </section>
     </div>

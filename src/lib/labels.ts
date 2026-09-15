@@ -1,4 +1,4 @@
-import type { BloodGroup, Genotype, RecordType, Sex } from "@prisma/client";
+import type { BloodGroup, DocumentKind, Genotype, RecordType, Sex } from "@prisma/client";
 
 export const bloodGroupLabel: Record<BloodGroup, string> = {
   A_POS: "A+",
@@ -34,6 +34,26 @@ export const recordTypeLabel: Record<RecordType, string> = {
   IMMUNIZATION: "Immunization",
   NOTE: "Note",
 };
+
+export const documentKindLabel: Record<DocumentKind, string> = {
+  XRAY: "X-ray",
+  SCAN: "Scan",
+  LAB_REPORT: "Lab report",
+  DOCTOR_NOTE: "Doctor note",
+  PRESCRIPTION: "Prescription",
+  DISCHARGE: "Discharge",
+  OTHER: "Other",
+};
+
+export const documentKinds: DocumentKind[] = [
+  "XRAY",
+  "SCAN",
+  "LAB_REPORT",
+  "DOCTOR_NOTE",
+  "PRESCRIPTION",
+  "DISCHARGE",
+  "OTHER",
+];
 
 export const recordTypes: RecordType[] = [
   "CONSULTATION",

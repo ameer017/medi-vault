@@ -42,12 +42,20 @@ export default async function ChartPage() {
             {ageYears(patient.dateOfBirth) != null ? ` · ${ageYears(patient.dateOfBirth)} yrs` : ""}
           </p>
         </div>
-        <Link
-          className="rounded-full bg-[var(--ink)] px-4 py-2 text-sm font-semibold text-[var(--mint)]"
-          href="/chart/profile"
-        >
-          Edit profile
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            className="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-[var(--teal)]"
+            href="/files"
+          >
+            Files
+          </Link>
+          <Link
+            className="rounded-full bg-[var(--ink)] px-4 py-2 text-sm font-semibold text-[var(--mint)]"
+            href="/chart/profile"
+          >
+            Edit profile
+          </Link>
+        </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-4">

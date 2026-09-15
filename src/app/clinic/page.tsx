@@ -60,6 +60,9 @@ export default async function ClinicHomePage() {
                       {grant.patient.allergies.length > 0
                         ? ` · ${grant.patient.allergies.length} allerg${grant.patient.allergies.length === 1 ? "y" : "ies"}`
                         : ""}
+                      {grant.patient._count.documents
+                        ? ` · ${grant.patient._count.documents} file${grant.patient._count.documents === 1 ? "" : "s"}`
+                        : ""}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

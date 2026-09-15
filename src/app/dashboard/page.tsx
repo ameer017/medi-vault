@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { QrCode } from "lucide-react";
+import { FileStack, QrCode } from "lucide-react";
 import { AllergyList, MedicationList, RecordTimeline } from "@/components/chart-view";
 import { EmptyState } from "@/components/states";
 import { Button } from "@/components/ui/button";
 import { getOwnPatient } from "@/lib/access";
+import { prisma } from "@/lib/db";
 import { firstName } from "@/lib/auth-redirect";
 import { ageYears, greetingWAT } from "@/lib/datetime";
 import { bloodGroupLabel, genotypeLabel } from "@/lib/labels";
@@ -24,6 +25,7 @@ export default async function PatientDashboardPage() {
   }
 
   const activeGrants = patient.grants.filter((grant) => grant.status === "ACTIVE" && grant.clinicianId);
+  const fileCount = await prisma.patientDocument.count({ where: { patientId: patient.id } });
   const age = ageYears(patient.dateOfBirth);
   const blood = patient.bloodGroup ? bloodGroupLabel[patient.bloodGroup] : "—";
 
@@ -66,7 +68,7 @@ export default async function PatientDashboardPage() {
           </div>
         </section>
 
-        <section className="rounded-[2rem] bg-white/80 p-6 lg:col-span-3">
+        <section className="rounded-[2rem] bg-white/80 p-6 lg:col-span-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--teal)]">Live grants</p>
           <p className="mt-3 font-display text-6xl font-extrabold">{activeGrants.length}</p>
           <p className="mt-2 text-sm text-[var(--muted)]">clinicians with the key</p>
@@ -75,7 +77,19 @@ export default async function PatientDashboardPage() {
           </Link>
         </section>
 
-        <section className="flex flex-col justify-between rounded-[2rem] bg-gradient-to-br from-indigo-100 to-cyan-100 p-6 lg:col-span-5">
+        <section className="flex flex-col justify-between rounded-[2rem] bg-[var(--ink)] p-6 text-white lg:col-span-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Cabinet</p>
+            <p className="mt-3 font-display text-6xl font-extrabold">{fileCount}</p>
+            <p className="mt-2 text-sm text-white/60">X-rays, scans, doctor notes</p>
+          </div>
+          <Link href="/files" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--mint)]">
+            <FileStack className="h-4 w-4" />
+            Open files →
+          </Link>
+        </section>
+
+        <section className="flex flex-col justify-between rounded-[2rem] bg-gradient-to-br from-indigo-100 to-cyan-100 p-6 lg:col-span-12">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--teal)]">In case of emergency</p>
             <h2 className="mt-1 font-display text-3xl">Print the ICE card</h2>

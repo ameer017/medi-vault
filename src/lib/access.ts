@@ -57,7 +57,13 @@ export async function listClinicianPatients(clinicianUserId: string) {
       expiresAt: { gt: new Date() },
     },
     include: {
-      patient: { include: { user: true, allergies: { where: { active: true } } } },
+      patient: {
+        include: {
+          user: true,
+          allergies: { where: { active: true } },
+          _count: { select: { documents: true } },
+        },
+      },
     },
     orderBy: { redeemedAt: "desc" },
   });

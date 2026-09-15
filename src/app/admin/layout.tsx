@@ -14,13 +14,13 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-full border border-white/70 bg-[var(--ink)] px-3 py-2">
+      <div className="no-scrollbar mb-6 flex items-center gap-2 overflow-x-auto rounded-2xl border border-white/70 bg-[var(--ink)] px-3 py-2 md:rounded-full">
         <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200">Network</p>
         {links.map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
+            className="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
           >
             {link.label}
           </Link>

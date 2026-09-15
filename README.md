@@ -14,7 +14,7 @@ npm run dev
 ```
 
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Live site: [https://medic-vault.netlify.app](https://medic-vault.netlify.app).
 
 ## Seed logins
 
@@ -29,6 +29,7 @@ Dr. Tunde Adeyemi (Cardiology, LUTH) already has a 7-day grant to Amina Bello’
 ## What is included
 
 - Patient vault: allergies, medications, visit timeline, NHIA / blood group / genotype
+- File cabinet: X-rays, scans, lab PDFs and doctor notes (patient + granted clinician)
 - Share a 24-hour walk-in code, or grant a named clinician 1 / 7 / 30 days
 - Revoke access at any time
 - Clinician chart + add consultation, vitals, prescription, lab, allergy, immunization
@@ -45,7 +46,7 @@ Dr. Tunde Adeyemi (Cardiology, LUTH) already has a 7-day grant to Amina Bello’
 | --- | --- |
 | `DATABASE_URL` | Neon connection string |
 | `AUTH_SECRET` | `openssl rand -base64 32` |
-| `AUTH_URL` | `https://<your-site>.netlify.app` |
+| `AUTH_URL` | `https://medic-vault.netlify.app` |
 
 4. Trigger a deploy. The build runs `prisma generate` and `prisma db push` (schema only, no seed wipe).
 5. Seed once from your machine:
