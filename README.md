@@ -1,6 +1,6 @@
 # MediVault
 
-Patient-owned healthcare records for Nigeria. Patients hold the chart, grant time-limited access to clinicians, and carry an emergency QR card. Lagos, Abuja and Ibadan facilities are seeded.
+A patient-owned healthcare record system designed for Nigeria. Patients retain full control of their medical charts, grant time-limited access to clinicians, and carry an emergency QR card for instant access during critical care. Initial rollout covers seeded healthcare facilities across Lagos, Abuja, and Ibadan.
 
 ## Setup
 
@@ -13,9 +13,6 @@ npm run db:setup
 npm run dev
 ```
 
-Local Postgres is `postgresql://medivault:medivault@localhost:5433/medivault` (port **5433** so RailNG can keep 5432). SQLite will not work on Netlify.
-
-If RailNG is already on port 3000, start this app with `npx next dev -p 3001` and set `AUTH_URL=http://localhost:3001`.
 
 Open [http://localhost:3000](http://localhost:3000).
 
